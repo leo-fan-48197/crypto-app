@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\Models\Coin;
+use Carbon\Carbon;
 
 class CoinController extends Controller
 {
@@ -182,7 +183,14 @@ class CoinController extends Controller
             'quantity' => 'required|numeric',
         ]);
 
-        
+        DB::table('purchases')->insert([
+            'coin_id'    => $request->coin_id,
+            'price'      => $request->price,
+            'quantity'   => $request->quantity,
+            'created_at' => new Carbon(),
+        ]);
+
+        return redirect('/');
     }
 
     /**
