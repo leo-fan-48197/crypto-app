@@ -20,3 +20,6 @@ use App\Http\Controllers\CoinController;
 
 
 Route::get('/', [CoinController::class, 'index']);
+Route::get('/coins/{coin}', [CoinController::class, 'show']);
+Route::get('/coins/{coin}/buy', [CoinController::class, 'buy']);
+Route::post('/coins/{coin}/buy', [CoinController::class, 'purchase']);

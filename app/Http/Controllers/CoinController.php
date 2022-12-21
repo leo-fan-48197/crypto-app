@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\Models\Coin;
 
 class CoinController extends Controller
 {
@@ -133,9 +134,8 @@ class CoinController extends Controller
     public function index()
     {
         $coins = DB::table('coins')->orderBy('rank', 'asc')->get();
-        
+        print_r($coins);
         return view('welcome', ['coins' => $coins]);
-
     }
 
     // Function to check string starting
@@ -151,6 +151,17 @@ class CoinController extends Controller
         return (substr($str, 0, ($len-1)));
     }
     
+    function buy($id)
+    {
+        $coin = Coin::find($id);
+
+        return view('coin.buy', ['coin' => $coin]);
+    }
+
+    function purchase($id)
+    {
+        dd($id);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -181,7 +192,8 @@ class CoinController extends Controller
      */
     public function show($id)
     {
-        //
+        $coin = Coin::find($id);
+        return view('coin.show', ['coin' => $coin]);
     }
 
     /**
