@@ -175,11 +175,14 @@ class CoinController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    { dd($request);
+    { 
         $validated = $request->validate([
             'coin_id'  => 'required',
-            ''    => 'required|numeric',
+            'price'    => 'required|numeric',
+            'quantity' => 'required|numeric',
         ]);
+
+        
     }
 
     /**
