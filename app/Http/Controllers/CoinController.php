@@ -9,6 +9,16 @@ use Carbon\Carbon;
 
 class CoinController extends Controller
 {
+    function __construct()
+    {
+        $download_record = DB::table('downloads')->first();
+
+        if( $download_record == null)
+        {
+            $this->getDataAndSaveToDB();
+        }
+        
+    }
     /**
      * use curl to get data and save results to DB
      *
@@ -29,7 +39,7 @@ class CoinController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
-          ));
+        ));
           
           $response = curl_exec($curl);
           
@@ -42,16 +52,17 @@ class CoinController extends Controller
 
           $coins_array = explode("},", $response);
 
-          foreach($coins_array as $coin){
+        foreach($coins_array as $coin){
             $row = substr($coin, 1);
 
             $rank_position = strpos($row, "rank");
             $coin_rank = substr($row, ($rank_position + 7), 2);
 
+            //find top five cryptocurrencies
             if($coin_rank <= 5 || $coin_rank == '5"' ){
 
-                $coin_arr =  explode(',', $row); print_r($coin_arr);
-
+                $coin_arr =  explode(',', $row);
+                //extract data from string
                 foreach($coin_arr as $info){
                     if($this->startsWith($info, '"id":' )){
                         $coin_id = substr($info, 6); 
@@ -104,27 +115,33 @@ class CoinController extends Controller
                     }
 
                 }
+                //save data to db
+                DB::table('coins')->insert([
+                    'coin_id'   =>  $coin_id,
+                    'rank'      =>  $rank,
+                    'symbol'    =>  $symbol,
+                    'name'      =>  $name,
+
+                    'supply'        => floatval($supply),
+                    'maxSupply'     => floatval($maxSupply),
+                    'marketCapUsd'  => floatval($marketCapUsd),
+                    'volumeUsd24Hr' => floatval($volumeUsd24Hr),
+
+                    'priceUsd'          => floatval($priceUsd),
+                    'changePercent24Hr' => floatval($changePercent24Hr),
+                    'vwap24Hr'          => floatval($vwap24Hr),
+                    'created_at'        =>  new Carbon(),
+                ]);
+
+                DB::table('downloads')->insert([
+                    'has_downloaded'   =>  true,
+                    'created_at'       =>  new Carbon(),
+                ]);
+
             }else{
                 continue;
             }
-            
-            DB::table('coins')->insert([
-                        'coin_id'   =>  $coin_id,
-                        'rank'      =>  $rank,
-                        'symbol'    =>  $symbol,
-                        'name'      =>  $name,
-
-                        'supply'        => floatval($supply),
-                        'maxSupply'     => floatval($maxSupply),
-                        'marketCapUsd'  => floatval($marketCapUsd),
-                        'volumeUsd24Hr' => floatval($volumeUsd24Hr),
-
-                        'priceUsd'          => floatval($priceUsd),
-                        'changePercent24Hr' => floatval($changePercent24Hr),
-                        'vwap24Hr'          => floatval($vwap24Hr),
-                    ]);
-          }
-
+        }// foreach
     }
 
     /**
@@ -135,7 +152,7 @@ class CoinController extends Controller
     public function index()
     {
         $coins = DB::table('coins')->orderBy('rank', 'asc')->get();
-        print_r($coins);
+
         return view('welcome', ['coins' => $coins]);
     }
 
