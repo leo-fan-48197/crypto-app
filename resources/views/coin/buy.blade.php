@@ -63,11 +63,11 @@
 
                                     <div class="mb-3 mt-3">
                                         <label class="form-label"> Purchase Price:</label>
-                                        <input type="number" step=any class="form-control" name="price">
+                                        <input type="number" step=any class="form-control" name="price" required>
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label">Quantity:</label>
-                                        <input type="number" step=any class="form-control" name="quantity">
+                                        <input type="number" step=any class="form-control" name="quantity" required>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Buy</button>
