@@ -158,11 +158,6 @@ class CoinController extends Controller
         return view('coin.buy', ['coin' => $coin]);
     }
 
-    function purchase($id)
-    {
-        dd($id);
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -180,8 +175,11 @@ class CoinController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    { dd($request);
+        $validated = $request->validate([
+            'coin_id'  => 'required',
+            ''    => 'required|numeric',
+        ]);
     }
 
     /**

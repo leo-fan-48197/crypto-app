@@ -41,7 +41,9 @@
                             <div class="ml-12">
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                 
-                                <form action="/coin/{{ $coin->coin_id }}/buy" method="post">
+                                <form action="/coins/{{ $coin->id }}/buy" method="post">
+                                    @csrf
+                                    <input type="hidden" id="coin_id" name="coin_id" value="{{ $coin->coin_id }}">
                                     <div class="mb-3 mt-3">
                                         <label class="form-label">Name:</label>
                                         <input type="text" class="form-control" disabled value="{{ $coin->name }}">
@@ -61,11 +63,11 @@
 
                                     <div class="mb-3 mt-3">
                                         <label class="form-label"> Purchase Price:</label>
-                                        <input type="text" class="form-control">
+                                        <input type="number" step=any class="form-control" name="price">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label">Quantity:</label>
-                                        <input type="text" class="form-control">
+                                        <input type="number" step=any class="form-control" name="quantity">
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Buy</button>
