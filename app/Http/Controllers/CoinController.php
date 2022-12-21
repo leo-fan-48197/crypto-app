@@ -8,11 +8,11 @@ use DB;
 class CoinController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * use curl to get data and save results to DB
      *
-     * @return \Illuminate\Http\Response
+     * 
      */
-    public function index()
+    public function getDataAndSaveToDB()
     {
         // create curl resource
         $curl = curl_init();
@@ -37,7 +37,6 @@ class CoinController extends Controller
           $position = strrpos($response, ']', -1);
 
           $response = substr($response, 0, $position);
-        //   print_r($response);
 
           $coins_array = explode("},", $response);
 
@@ -47,61 +46,59 @@ class CoinController extends Controller
             $rank_position = strpos($row, "rank");
             $coin_rank = substr($row, ($rank_position + 7), 2);
 
-            // print_r(($row));
-
             if($coin_rank <= 5 || $coin_rank == '5"' ){
-                // echo $coin_rank ;
+
                 $coin_arr =  explode(',', $row); print_r($coin_arr);
 
                 foreach($coin_arr as $info){
                     if($this->startsWith($info, '"id":' )){
                         $coin_id = substr($info, 6); 
                         $coin_id = $this->removeQuotationMarks($coin_id);
-                        echo $coin_id; echo "+++";
+                        // echo $coin_id; echo "+++";
                     }elseif($this->startsWith($info, '"rank"' )){
                         $rank = substr($info, 8, 1); 
                         $rank = intval($rank, $base = 10);
-                        echo(gettype($rank) ); 
+                        // echo(gettype($rank) ); 
                     }elseif($this->startsWith($info, '"symbol"' )){
                         $symbol = substr($info, 10);
                         $symbol = $this->removeQuotationMarks($symbol); 
-                        echo $symbol; echo "+++";
+                        // echo $symbol; echo "+++";
                     }elseif($this->startsWith($info, '"name"' )){
                         $name = substr($info, 8); 
                         $name = $this->removeQuotationMarks($name); 
-                        echo $name; echo "+++";
+                        // echo $name; echo "+++";
                     }elseif($this->startsWith($info, '"supply"' )){
                         $supply = substr($info, 10); 
                         $supply = $this->removeQuotationMarks($supply); 
-                        echo $supply; echo "+++";
+                        // echo $supply; echo "+++";
                     }elseif($this->startsWith($info, '"maxSupply"' )){
                         $maxSupply = substr($info, 13);
                         $maxSupply = $this->removeQuotationMarks($maxSupply);  
-                        echo $maxSupply; echo "+++";
+                        // echo $maxSupply; echo "+++";
                     }elseif($this->startsWith($info, '"volumeUsd24Hr"' )){
                         $volumeUsd24Hr = substr($info, 17); 
                         $volumeUsd24Hr = $this->removeQuotationMarks($volumeUsd24Hr);  
-                        echo $volumeUsd24Hr; echo "+++";
+                        // echo $volumeUsd24Hr; echo "+++";
                     }elseif($this->startsWith($info, '"marketCapUsd"' )){
                         $marketCapUsd = substr($info, 16); 
                         $marketCapUsd = $this->removeQuotationMarks($marketCapUsd); 
-                        echo $marketCapUsd; echo "+++";
+                        // echo $marketCapUsd; echo "+++";
                     }elseif($this->startsWith($info, '"priceUsd"' )){
                         $priceUsd = substr($info, 12); 
                         $priceUsd = $this->removeQuotationMarks($priceUsd); 
-                        echo $priceUsd; echo "+++";
+                        // echo $priceUsd; echo "+++";
                     }elseif($this->startsWith($info, '"changePercent24Hr"' )){
                         $changePercent24Hr = substr($info, 21);
                         $changePercent24Hr = $this->removeQuotationMarks($changePercent24Hr);  
-                        echo $changePercent24Hr; echo "+++";
+                        // echo $changePercent24Hr; echo "+++";
                     }elseif($this->startsWith($info, '"vwap24Hr"' )){
                         $vwap24Hr = substr($info, 12);
                         $vwap24Hr = $this->removeQuotationMarks($vwap24Hr);  
-                        echo $vwap24Hr; echo "+++";
+                        // echo $vwap24Hr; echo "+++";
                     }elseif($this->startsWith($info, '"explorer"' )){
                         $explorer = substr($info, 12); 
                         $explorer = $this->removeQuotationMarks($explorer); 
-                        echo $explorer; echo "+++";
+                        // echo $explorer; echo "+++";
                     }
 
                 }
@@ -125,8 +122,19 @@ class CoinController extends Controller
                         'vwap24Hr'          => floatval($vwap24Hr),
                     ]);
           }
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $coins = DB::table('coins')->orderBy('rank', 'asc')->get();
         
-        return view('welcome');
+        return view('welcome', ['coins' => $coins]);
 
     }
 
